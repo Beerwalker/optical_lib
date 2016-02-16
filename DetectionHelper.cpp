@@ -1,4 +1,5 @@
 #include "DetectionHelper.h"
+#include "float.h"
 
 bool DetectionHelper::arePolygonsEqual(mat polygon, double ratio, double epsilon){
 	return false;
@@ -10,7 +11,10 @@ mat DetectionHelper::whitenData(mat source){
 	//get mean column-wise and substract it
 	mat mu = mean(source);
 	for(int i=0;i<source.n_cols;i++){
-		source.cols(0,i).rows(0,arma::size(source).n_rows-1) -= mu(0,i);
+		for(int j=0;j<source.n_rows;j++){
+			source(j,i) -= mu(0,i);
+		}
+		//source.cols(0,i).rows(0,arma::size(source).n_rows-1) -= mu(0,i);
 	}
 
 	mat A = source.t()*source;
@@ -80,7 +84,7 @@ mat DetectionHelper::compute2DPolygonCentroid(const mat& shape)
 
 	// For all vertices
 	int i=0;
-	for (i=0; i<vertexCount-2; ++i)
+	for (i=0; i<vertexCount-1; ++i)
 	{
 		x0 = shape(i,0);
 		y0 = shape(i,1);
@@ -123,7 +127,7 @@ bool DetectionHelper::deductCenter(const mat & figure, const mat & shape, mat& c
 bool DetectionHelper::matchShapeToRef(const mat& reference, const mat& shape, std::vector<int>& shape_to_reference, mat& center){
 
 	bool has_center = false;
-	//сопоставить точки на shape и reference
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ shape пїЅ reference
 	shape_to_reference.resize(reference.n_rows);
 	for (int i = 0; i != reference.n_rows; i++) {
 		for (int j = 0; j != shape.n_rows - 1; j++) {

@@ -5,7 +5,7 @@
 #include <time.h>
 #include <stdint.h>
 
-#define RS_MAX_POINTS 			2
+#define RS_MAX_POINTS 			10
 #define RS_MAX_PACKET_SIZE 		100 // In uint16_t (words)
 #define RS_PACKET_HEADER_SIZE	5	// Size of packet header
 

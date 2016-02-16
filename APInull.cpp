@@ -1,6 +1,6 @@
 #include "APInull.h"
 #include <chrono>
-#include "CombinationEnumerator.h"
+#include "CombinationEnumeratorv2.h"
 
 using namespace std::chrono;
 
@@ -8,9 +8,19 @@ using namespace std::chrono;
 cNullVisionApi::cNullVisionApi(int version)
 {
 	Q = zeros<mat>(4,4);
-	Q.ones();
+	//Q.ones();
+	Q << 1 << 0 << 0 << -520.98774719238281f << endr
+		  << 0 << 1 << 0 << -484.01725769042969f << endr
+		  << 0 << 0 << 0 << 1675.5800984977814f << endr
+		  << 0 << 0 << 0.0023057306048315891f <<  1.8180805088304086f << endr;
+//	Q << 1 << 0 << 0 << -1284.8555755615234f << endr
+//	  << 0 << 1 << 0 << -4832.0583724975586f << endr
+//	  << 0 << 0 << 0 << 1684.4618241527660f << endr
+//	  << 0 << 0 << -0.0022727984493103267f <<  1.5887206921795818f << endr;
+
 	m_version = version;
 	next_id = 0;
+	balls_count.store(0);
 }
 
 void cNullVisionApi::findAllInstruments(mat& left_cam, mat& right_cam) {
@@ -25,15 +35,29 @@ void cNullVisionApi::findAllInstruments(mat& left_cam, mat& right_cam) {
 	TIMEVAL current_time = system_clock::now().time_since_epoch().count();
 	for (int i = 0; i < n_instrumnets; i++) {
 		left_enumerator.setCombinationSize(temp_instruments[i].getReferencePointCount());
-		bool isLeftFound = left_enumerator.findInstrument(&temp_instruments[i], 2, result_left);
-
+		//cout << "left" << endl;
+        bool isLeftFound = left_enumerator.findInstrument(&(temp_instruments[i]), 0.01f, result_left);
 		right_enumerator.setCombinationSize(temp_instruments[i].getReferencePointCount());
-		bool isRightFound = right_enumerator.findInstrument(&temp_instruments[i], 2, result_right);
-
+		//cout << "right" << endl;
+		bool isRightFound = right_enumerator.findInstrument(&(temp_instruments[i]), 0.01f, result_right);
 		mat last_coords;
 		if (isLeftFound && isRightFound) {
+			last_coords = zeros<mat>(temp_instruments[i].getReferencePointCount(),3);
 			for(int j =0; j < result_right.n_rows; j++){
-				double d = result_right(j,0) - result_left(j,0);
+//				last_coords(j,0) = result_left(j,0);
+//				last_coords(j,1) = result_left(j,1);
+//				last_coords(j,2) = 0;
+
+//				double d = result_right(j,0) - result_left(j,0);
+//				last_coords(j,0) = result_left(j,0) * Q(0,0) + Q(0,3);
+//				last_coords(j,1) = result_left(j,1) * Q(1,1) + Q(1,3);
+//				last_coords(j,2) = Q(2,3);
+//				double W = d*Q(3,2) + Q(3,3);
+//				last_coords(j,0) = last_coords(j,0) / W;
+//				last_coords(j,1) = last_coords(j,1) / W;
+//				last_coords(j,2) = last_coords(j,2) / W;
+
+				double d = result_left(j,0) - result_right(j,0);
 				last_coords(j,0) = result_left(j,0) * Q(0,0) + Q(0,3);
 				last_coords(j,1) = result_left(j,1) * Q(1,1) + Q(1,3);
 				last_coords(j,2) = Q(2,3);
@@ -75,8 +99,8 @@ VIID cNullVisionApi::createInstrument(const std::vector<Point3d>& instrumentRefe
 void cNullVisionApi::removeInstrument(VIID instrId) {
 	for (std::vector<sVisionInstrument>::size_type i = 0; i != m_instruments.size(); i++) {
 		if (m_instruments[i].getID() == instrId) {
-			m_instruments.erase(m_instruments.begin() + i);
 			balls_count.store(balls_count.load() - m_instruments[i].getReferencePointCount());
+			m_instruments.erase(m_instruments.begin() + i);
 			return;
 		}
 	}
@@ -110,9 +134,9 @@ std::vector<Point3d> cNullVisionApi::getLastCoords(VIID id)
 			mat coords = m_instruments[i].getLastCoords();
 			std::vector<Point3d> result(coords.n_rows);
 			for (int j = 0; j != coords.n_rows; j++) {
-				result[j].x = coords(i, 0);
-				result[j].y = coords(i, 1);
-				result[j].z = coords(i, 2);
+				result[j].x = coords(j, 0);
+				result[j].y = coords(j, 1);
+				result[j].z = coords(j, 2);
 			}
 			return result;
 		}

@@ -1,4 +1,5 @@
 #include "APIv2.h"
+#include <chrono>
 
 void APIv2::beginSearch()
 {
@@ -25,26 +26,26 @@ void APIv2::worker_thread()
 {
 	isSearchStarted.store(true);
 	int ret_code = modbus->Start();
-	if (ret_code != 0){
+	if (ret_code < 0){
 		errCode.store(ret_code);
 		isSearchStarted.store(false);
 		return;
 	}
 	RSPacket::BallsDataStruct balls;
 	while(isSearchStarted.load()){
-		ret_code = modbus->SetNumberOfBalls(balls_count.load());
-		if (ret_code != 0){
+		ret_code = modbus->SetNumberOfBalls(10/*balls_count.load()*/);
+		if (ret_code < 0){
 			//do shit
 			errCode.store(ret_code);
 			isSearchStarted.store(false);
-			return;
+			continue;
 		}
 		ret_code = modbus->GetBallsData(balls);
-		if (ret_code != 0){
+		if (ret_code < 0){
 			//do shit
 			errCode.store(ret_code);
 			isSearchStarted.store(false);
-			return;
+			continue;
 		}
 		//convert to mat
 		mat left = zeros<mat>(balls.pointsArrays[0].size,3);
@@ -58,12 +59,12 @@ void APIv2::worker_thread()
 			right(i,1) = balls.pointsArrays[1].array[i].Y;
 		}
 		findAllInstruments(left, right);
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		std::this_thread::sleep_for(std::chrono::milliseconds(30));
 	}
 
 	//exit
 	ret_code = modbus->Stop();
-	if(ret_code != 0){
+	if(ret_code < 0){
 		errCode.store(ret_code);
 	}
 	//isSearchStarted.store(false);

@@ -4,13 +4,13 @@
 #include <atomic>
 #include <thread>
 #include "APInull.h"
-#include "ModbusHandler.h"
+#include "ModbusClientV1.h"
 
 
 class APIv2 : public cNullVisionApi
 {
 private:
-	ModbusHandler* modbus;
+	ModbusClientV1* modbus;
 	std::atomic<bool> isSearchStarted;
 	std::atomic<int> errCode;
 	std::thread worker;
@@ -18,7 +18,7 @@ private:
 	void worker_thread();
 public:	
 	APIv2() : cNullVisionApi(1) {
-		modbus = new ModbusHandler();
+		modbus = new ModbusClientV1("/dev/ttyM0");
 		isSearchStarted.store(false);
 	};
 

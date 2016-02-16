@@ -8,14 +8,14 @@
 #include "VisionAPI.h"
 
 class CombinationEnumerator;
-
+class CombinationEnumeratorv2;
 
 using namespace arma;
 
-//Внутренняя реализация инструмента. Может быть любой.
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
 class sVisionInstrument
 {
-private:
+protected:
 	VIID m_id;
 	mat m_referencePoints;
 	mat m_lastPointsCoord;
@@ -32,17 +32,18 @@ private:
 	double poly_ratio;
 
 	mat& convertRefencePoints(const std::vector<Point3d> &instrumentReferencePoints);
-	void init(const mat & instrumentReferencePoints);
+	virtual void init(const mat & instrumentReferencePoints);
 public:
 	friend CombinationEnumerator;
+	friend CombinationEnumeratorv2;
 	sVisionInstrument(const std::vector<Point3d> &instrumentReferencePoints, VIID id);
 	sVisionInstrument(const mat &instrumentReferencePoints, VIID id);
 	sVisionInstrument(const sVisionInstrument& instr);
-	sVisionInstrument& sVisionInstrument::operator =(const sVisionInstrument &);
+	virtual sVisionInstrument& operator =(const sVisionInstrument &);
 
 	VIID getID();
 	VIID getID() const;
-	int sVisionInstrument::getReferencePointCount();
+	int getReferencePointCount();
 
 	//tmp 
 	const mat& getReferencePoints(){

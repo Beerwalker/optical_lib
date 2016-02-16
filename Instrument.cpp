@@ -50,9 +50,9 @@ void sVisionInstrument::init(const mat & instrumentReferencePoints){
 	shape = DetectionHelper::getBoundary(m_referencePoints);
 	poly_ratio = DetectionHelper::calculatePolyRatio(shape);
 
-	//сопоставить точки на shape и reference
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ shape пїЅ reference
 	has_center = DetectionHelper::matchShapeToRef(m_referencePoints, shape, shape_to_reference, center);
-
+	//cout << m_referencePoints << endl;
 	//find closest point to centroid on shape
 	vec centroid = DetectionHelper::compute2DPolygonCentroid(shape);
 	closest_index = DetectionHelper::getClosestToCentroid(shape,centroid);
