@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 	cv::Mat color;
 	int u = 0;
 	std::vector<cv::Point2f> circles;
-	Instrumentv2 instrument(frame_mm,1);
+	Instrumentv2 instrument(needle_mm,1);
  	while(u < 500){
 		u++;
 		cap >> color; // get a new frame from camera
@@ -75,14 +75,16 @@ int main(int argc, char** argv)
 
 		
 		CombinationEnumeratorv2 finder(circles_result, 5);
-		mat instrument_points;
+		//mat instrument_points;
+		std::map<double,mat> instrument_points;
 		bool isFound = finder.findInstrument(&instrument, 0.015f, instrument_points);
 
 		cv::Mat drawing(1080, 1920, CV_8UC1, cv::Scalar(0));
-		cv::Point* result_points = new cv::Point[instrument_points.n_rows];
-		for(int i =0 ; i <instrument_points.n_rows; i++){
-			result_points[i].x = instrument_points(i,0);
-			result_points[i].y = instrument_points(i,1);
+		int total_points = (instrument_points.begin())->second.n_rows;
+		cv::Point* result_points = new cv::Point[total_points];
+		for(int i =0 ; i <total_points; i++){
+			result_points[i].x = instrument_points.begin()->second(i,0);
+			result_points[i].y = instrument_points.begin()->second(i,1);
 			cv::circle(drawing,result_points[i],5, cv::Scalar(255),3);
 		}
 		//cv::fillConvexPoly(drawing, result_points,z.size(), cv::Scalar(255));

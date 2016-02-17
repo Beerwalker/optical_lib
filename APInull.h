@@ -3,10 +3,13 @@
 
 #include "VisionAPI.h"
 #include <armadillo>
-#include "Instrument.h"
+#include "Instrumentv2.h"
 #include <atomic>
 
+#define REAL_DISTANCE_THRES 1.5
 using namespace arma;
+
+
 	//Обобщение базовых функций. Чтобы не пришлось реализовывать в каждом потомке. 
 class cNullVisionApi : public cVisionAPI
 {
@@ -14,7 +17,7 @@ protected:
 	cNullVisionApi(int version);
 	cNullVisionApi(const cNullVisionApi & api){};
 protected:
-	std::vector<sVisionInstrument> m_instruments;
+	std::vector<Instrumentv2> m_instruments;
 	std::atomic<int> balls_count;
 	std::mutex  instrument_mutex;
 	int m_version;

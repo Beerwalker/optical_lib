@@ -106,7 +106,7 @@ bool CombinationEnumeratorv2::enumerateCombinations(int offset, int k)
 	return false;
 }
 
-bool CombinationEnumeratorv2::findInstrument(Instrumentv2* ref_instrumentv2, double epsilon, mat& instrument_points)
+bool CombinationEnumeratorv2::findInstrument(Instrumentv2* ref_instrumentv2, double epsilon, map<double,mat>& instrument_points)
 {
 	if (points->n_rows < combination_size) return false;
 	candidates.clear();
@@ -123,8 +123,9 @@ bool CombinationEnumeratorv2::findInstrument(Instrumentv2* ref_instrumentv2, dou
 	//filter found points
 	if (candidates.size() > 0){
 		isFound = true;
-		auto best_iter = candidates.begin();
-		instrument_points = best_iter->second;
+		instrument_points = candidates;
+		//auto best_iter = candidates.begin();
+		//instrument_points = best_iter->second;
 		
 		//check distances
 

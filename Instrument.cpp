@@ -46,6 +46,7 @@ void sVisionInstrument::init(const mat & instrumentReferencePoints){
 	m_lastPointsCoord = zeros<mat>(instrumentReferencePoints.n_rows, 3);
 	m_lastCoordUpdateTime = 0;
 	m_bVisible = false;
+	realReferencePoints = instrumentReferencePoints;
 	m_referencePoints = DetectionHelper::whitenData(instrumentReferencePoints);
 	shape = DetectionHelper::getBoundary(m_referencePoints);
 	poly_ratio = DetectionHelper::calculatePolyRatio(shape);

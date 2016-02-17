@@ -12,11 +12,18 @@ void Instrumentv2::init(const mat & instrumentReferencePoints)
 	for(int i = 0; i < shape.n_rows-1; i++){
 		distances(i,0) = sqrt(pow(center(0,0) - shape(i,0),2) + pow(center(0,1) - shape(i,1),2));
 	}
+	//calculate distance to center from each point
+	int real_center_index = shape_to_reference[realReferencePoints.n_rows - 1];
+	for(int i = 0; i < realReferencePoints.n_rows; i++){
+		real_distances(i,0) = sqrt(pow(realReferencePoints(real_center_index,0) - realReferencePoints(i,0),2) + pow(realReferencePoints(real_center_index,1) - realReferencePoints(i,1),2));
+	}
+
 }
 
 Instrumentv2& Instrumentv2::operator=(const Instrumentv2 &instr)
 {
 	distances = instr.distances;
+	real_distances = instr.real_distances;
 	m_id = instr.m_id;
 	m_referencePoints = instr.m_referencePoints;
 	m_lastPointsCoord = instr.m_lastPointsCoord;
@@ -53,4 +60,14 @@ Instrumentv2::Instrumentv2(const mat &instrumentReferencePoints, VIID id) : sVis
 Instrumentv2::Instrumentv2(const Instrumentv2& instr) : sVisionInstrument(instr)
 {
 	distances = instr.distances;
+}
+
+double Instrumentv2::compareInstruments(mat distances)
+{
+	if (distances.n_rows != this->real_distances.n_rows) return DBL_MAX;
+	double total_error = 0;
+	for(int i =0; i < distances.n_rows; i++){
+		total_error += abs(this->real_distances(i,0) - distances(i,0));
+	}
+	return total_error;
 }

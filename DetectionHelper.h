@@ -19,6 +19,7 @@ public:
 	static bool deductCenter(const mat & figure, const mat & shape, mat& center);
 	static bool matchShapeToRef(const mat& reference, const mat& shape, std::vector<int>& shape_to_reference, mat& center);
 	static int getClosestToCentroid(const mat& shape, const vec& centroid);
+	static mat calculate3Dcoords(const mat& left, const mat& right, const mat& Q);
 };
 
 #endif

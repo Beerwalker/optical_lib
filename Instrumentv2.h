@@ -5,6 +5,7 @@ class Instrumentv2 : public sVisionInstrument
 {
 protected:
 	mat distances;
+	mat real_distances;
 	virtual void init(const mat & instrumentReferencePoints) override;
 public:
 	friend CombinationEnumeratorv2;
@@ -14,5 +15,7 @@ public:
 	~Instrumentv2();
 
 	Instrumentv2& operator =(const Instrumentv2 &);
+
+	double compareInstruments(mat distances);
 };
 

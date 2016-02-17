@@ -3,7 +3,7 @@
 
 #include <armadillo>
 #include <map>
-class sVisionInstrument;
+class Instrumentv2;
 
 using namespace arma;
 
@@ -13,7 +13,7 @@ protected:
 	mat combination;
 	int combination_size;
 	int combination_row;
-	sVisionInstrument* ref_instrument;
+	Instrumentv2* ref_instrument;
 	std::map<double,mat> candidates;
 	double epsilon;
 
@@ -28,7 +28,7 @@ public:
 	void setCombinationSize(int size);
 
 	void setPoints(mat& allPoints);
-	virtual bool findInstrument(sVisionInstrument* ref_instrument, double epsilon, mat& instrument_points);
+	virtual bool findInstrument(Instrumentv2* ref_instrument, double epsilon, mat& instrument_points);
 };
 
 #endif

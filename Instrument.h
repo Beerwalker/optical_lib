@@ -18,6 +18,7 @@ class sVisionInstrument
 protected:
 	VIID m_id;
 	mat m_referencePoints;
+	mat realReferencePoints;
 	mat m_lastPointsCoord;
 	TIMEVAL m_lastCoordUpdateTime;
 	bool m_bVisible;

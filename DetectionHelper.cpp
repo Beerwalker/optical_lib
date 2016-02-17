@@ -161,3 +161,21 @@ int DetectionHelper::getClosestToCentroid(const mat& shape, const vec& centroid)
 
 	return closest_index;
 }
+
+mat DetectionHelper::calculate3Dcoords(const mat& left, const mat& right, const mat& Q)
+{
+	if (left.n_rows != right.n_rows) return mat(0,0);
+	mat result = zeros<mat>(left.n_rows,3);
+	for(int j =0; j < left.n_rows; j++){
+		double d = left(j,0) - right(j,0);
+		result(j,0) = left(j,0) * Q(0,0) + Q(0,3);
+		result(j,1) = left(j,1) * Q(1,1) + Q(1,3);
+		result(j,2) = Q(2,3);
+		double W = d*Q(3,2) + Q(3,3);
+		result(j,0) = result(j,0) / W;
+		result(j,1) = result(j,1) / W;
+		result(j,2) = result(j,2) / W;
+
+	}
+	return result;
+}

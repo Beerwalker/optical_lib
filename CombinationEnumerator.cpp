@@ -1,6 +1,6 @@
 #include "CombinationEnumerator.h"
 #include "DetectionHelper.h"
-#include "Instrument.h"
+#include "Instrumentv2.h"
 #include "VisionAPI.h"
 #include <mutex>
 
@@ -93,12 +93,12 @@ bool CombinationEnumerator::enumerateCombinations(int offset, int k)
 	return false;
 }
 
-bool CombinationEnumerator::findInstrument(sVisionInstrument* ref_instrument, double epsilon, mat& instrument_points)
+bool CombinationEnumerator::findInstrument(Instrumentv2* ref_instrument, double epsilon, mat& instrument_points)
 {
 	if (points->n_rows < combination_size) return false;
 	candidates.clear();
 	ref_instrument->access_mutex.lock();
-	sVisionInstrument instrument(*ref_instrument);
+	Instrumentv2 instrument(*ref_instrument);
 	ref_instrument->access_mutex.unlock();
 	this->ref_instrument = &instrument;
 	this->epsilon = epsilon;
